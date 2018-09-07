@@ -1,12 +1,14 @@
 package com.hs.seoul;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,10 +21,10 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends Activity {
+
     private ListView mListView = null;
     ListAdapter listAdapter;
     String[] arrayJSON = new String[3];
@@ -30,8 +32,13 @@ public class MainActivity extends Activity {
     String result = "";
     String title = "";
     String date = "";
+    String time = "";
+    String place = "";
+    String useFee = "";
+    String inquiry = "";
+    String contents = "";
+    String link = "";
     String strImage = "";
-    String myJSON = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,20 +57,8 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
 
-        /*for(int i=0;i<20;i++)
-        {
-            ItemEvent item = new ItemEvent();
-            item.title = arrayJSON[0];
-            item.date = arrayJSON[2];
-            eventList.add(item);
-            Log.e("superdroid", "========" + arrayJSON[0] + "========" + arrayJSON[1] +"========" + arrayJSON[2]);
-            if(nCount >= arrayJSON.length) {
-                nCount = 0;
-            }
-        }*/
-
         mListView = (ListView)findViewById(R.id.listView);
-        listAdapter = new ListAdapter(eventList);
+        listAdapter = new ListAdapter(this, eventList);
         mListView.setAdapter(listAdapter);
 
     }
@@ -114,7 +109,7 @@ public class MainActivity extends Activity {
 
         protected void onPostExecute(Void result) {
             super.onPostExecute(String.valueOf(result));
-            ListAdapter adapter = new ListAdapter(eventList);
+            ListAdapter adapter = new ListAdapter(MainActivity.this, eventList);
 
             mListView.setAdapter(adapter);
         }
@@ -132,9 +127,24 @@ public class MainActivity extends Activity {
                 JSONObject jObject = jsonArray.getJSONObject(i);
                 ItemEvent event = new ItemEvent();
 
-                event.title = jObject.optString("TITLE");
-                event.date = jObject.optString("STRTDATE");
-                event.image = jObject.optString("MAIN_IMG");
+                title = jObject.optString("TITLE");
+                date = jObject.optString("STRTDATE") + " ~ " + jObject.optString("END_DATE");
+                time = jObject.optString("TIME");
+                place = jObject.optString("PLACE");
+                useFee = jObject.optString("USE_FEE");
+                inquiry = jObject.optString("INQUIRY");
+                contents = jObject.optString("CONTENTS");
+                strImage = jObject.optString("MAIN_IMG");
+                link = jObject.optString("ORG_LINK");
+                event.title = title;
+                event.date = date;
+                event.time = time;
+                event.place = place;
+                event.useFee = useFee;
+                event.inquiry = inquiry;
+                event.contents = contents;
+                event.link = link;
+                event.image = strImage;
 
                 eventList.add(event);
 
